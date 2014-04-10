@@ -4,38 +4,38 @@ AQSIS_V 2
 
 segment Data
 
-USES 444674
+USES 420098
 
-param uniform  color blue
-param uniform  color yellow
+param uniform  color purple
+param uniform  color orange
 param uniform  color white
 param uniform  float frequency
-param uniform  color diffuseLight
+param uniform  float diffuseStrength
 param uniform  float roughness
-param uniform  float bumpdepth
-varying  float fx
+param uniform  float bumpheight
+param uniform  float f
+varying  float segments
 varying  float alignedMeridian
 varying  float f1
 varying  float f2
 varying  float f3
-varying  point pp
 varying  normal normalValue
-varying  color c
+varying  color baseColor
+varying  color whitedBaseColor
 varying  color diffusedColor
-varying  color diffuseLitColor
 
 
 segment Init
+	pushif 0.600000024
+	pushif 0
 	pushif 0.5
-	pushif 0
-	pushif 0
 	settc
-	pop blue
+	pop purple
 	pushif 0
-	pushif 0.899999976
-	pushif 0.949999988
+	pushif 0.200000003
+	pushif 0.600000024
 	settc
-	pop yellow
+	pop orange
 	pushif 1
 	pushif 1
 	pushif 1
@@ -44,14 +44,13 @@ segment Init
 	pushif 4
 	pop frequency
 	pushif 0.899999976
-	pushif 0.899999976
-	pushif 0.899999976
-	settc
-	pop diffuseLight
-	pushif 0.0399999991
+	pop diffuseStrength
+	pushif 0.100000001
 	pop roughness
-	pushif 0.200000003
-	pop bumpdepth
+	pushif 0.800000012
+	pop bumpheight
+	pushif 0.100000001
+	pop f
 
 
 segment Code
@@ -60,7 +59,7 @@ segment Code
 	pushv s
 	mulff
 	mod
-	pop fx
+	pop segments
 	pushif 1
 	pushif 0.125
 	pushv frequency
@@ -69,24 +68,24 @@ segment Code
 	addff
 	mod
 	pop alignedMeridian
-	pushv fx
+	pushv segments
 	pushif 0.5
 	pushif 0.25
 	smoothstep
 	pop f1
-	pushv fx
+	pushv segments
 	pushif 1
 	pushif 0.75
 	smoothstep
 	pop f2
-	pushv t
-	pushif 0.119999997
-	pushif 0.0500000007
+	pushv v
+	pushv f
+	pushif 0.0649999976
+	pushv f
+	subff
 	smoothstep
 	pop f3
-	pushv P
-	pop pp
-	pushv bumpdepth
+	pushv bumpheight
 	setfp
 	pushv N
 	pushv frequency
@@ -100,35 +99,36 @@ segment Code
 	pushif 0.5
 	step
 	mulfp
-	pushv pp
+	pushv P
 	addpp
-	pop pp
-	pushv pp
+	pop P
+	pushv P
 	calculatenormal
 	pop N
 	pushv N
 	normalize
 	pop normalValue
-	pushv f3
 	pushv f2
 	pushv f1
 	subff
-	pushv blue
-	pushv yellow
+	pushv purple
+	pushv orange
 	cmix
+	pop baseColor
+	pushv f3
+	pushv baseColor
 	pushv white
 	cmix
-	pop c
+	pop whitedBaseColor
+	pushv diffuseStrength
 	pushv normalValue
 	diffuse
-	pushv c
+	pushv whitedBaseColor
 	mulcc
+	pushv whitedBaseColor
+	cmix
 	pop diffusedColor
-	pushv diffuseLight
 	pushv diffusedColor
-	mulcc
-	pop diffuseLitColor
-	pushv diffuseLitColor
 	pop Ci
 	pushv Os
 	pop Oi
